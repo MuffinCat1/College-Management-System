@@ -1,27 +1,158 @@
 package Matan_Shemaya_Shelly_Roit;
 
+import java.util.Arrays;
+
 public class Lecturer {
 	//properties
 	public enum degree {
 		First,
 		Second,
 		Doctor,
-		Proffesor
+		Professor
 	};
-	public String name;
-	public int id;
-	public degree lecturer_degree;
-	public String degree_name;
-	public float salary;
-	public Deparment deparment;
-	
+	private String name;
+	private int id;
+	private degree lecturer_degree; 
+	private String degree_name;
+	private float salary;
+	private Department department;
+	private Committee[] assigned_comeeties;
+	private int assigned_comeeties_num;
 	//Constructor
-	public Lecturer(String name, int id, degree lecturer_degree, String degree_name, float salary, Deparment deparment) {
-		this.name = name;
-		this.id = id;
-		this.lecturer_degree = lecturer_degree;
-		this.degree_name = degree_name;
-		this.salary = salary;
-		this.deparment = deparment;
+	public Lecturer(String name, int id, degree lecturer_degree, String degree_name, float salary) {
+		setName(name);
+		setId(id);
+		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
+		setDegree_name(degree_name);
+		setSalary (salary);
+		assigned_comeeties_num = 0;
 	}
+	public Lecturer(String name, int id, degree lecturer_degree, String degree_name, float salary, Department deparment) {
+		setName(name);
+		setId(id);
+		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
+		setDegree_name(degree_name);
+		setSalary (salary);
+		setDepartment(deparment);
+		assigned_comeeties_num = 0;
+	}
+	public Lecturer(String name, int id, degree lecturer_degree, String degree_name, float salary, Department deparment,Committee[] assigned_comeeties ) {
+		setName(name);
+		setId(id);
+		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
+		setDegree_name(degree_name);
+		setSalary (salary);
+		setDepartment(deparment);
+		setAssigned_comeeties(assigned_comeeties);
+		assigned_comeeties_num = 0;
+		
+	}
+	//get+set
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		if (!(name == null)) {
+			this.name = name;
+		}
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		if (id>=100000000) {
+			this.id = id;
+		}
+	}
+	public degree getLecturer_degree() {
+		return lecturer_degree;
+	}
+	public void setLecturer_degree(degree lecturer_degree) {
+		this.lecturer_degree = lecturer_degree;
+	}
+	public String getDegree_name() {
+		return degree_name;
+	}
+	public void setDegree_name(String degree_name) {
+		if (!(degree_name == null)) {
+			this.degree_name = degree_name;
+		}
+	}
+	public Department getDepartment() {
+		return department;
+	}
+	public void setDepartment (Department department) {
+		this.department = department;
+	}
+	public float getSalary() {
+		return salary;
+	}
+	public void setSalary (float salary) {
+		if (salary>=0) {
+			this.salary = salary;
+		}
+	}
+	public Committee[] getAssigned_comeeties() {
+		return assigned_comeeties;
+	}
+	public void setAssigned_comeeties(Committee[] assigned_comeeties) {
+		if (assigned_comeeties.length != 0) {
+			this.assigned_comeeties = assigned_comeeties;
+		}
+	}
+	
+	public boolean addCommitteeToLecturer(Committee new_committee) {
+		if (this.assigned_comeeties == null) {
+		    this.assigned_comeeties = new Committee[10];
+		  }
+		if (assigned_comeeties_num == assigned_comeeties.length) {
+			Committee[] assigned_comeeties2 = new Committee [2*assigned_comeeties.length];
+			for (int i = 0; i<this.assigned_comeeties.length;i++) {
+				assigned_comeeties2[i] = this.assigned_comeeties[i];
+			}
+			this.assigned_comeeties = assigned_comeeties2;
+		}
+		assigned_comeeties[assigned_comeeties_num] = new_committee;
+		assigned_comeeties_num++;
+		return true;
+	}
+	
+	public boolean removeCommittee(Committee committee) {
+		for (int i = 0; i<assigned_comeeties_num;i++ ) {
+			if(assigned_comeeties[i].getName().equals(committee.getName())) {
+				for(int j = i; j<assigned_comeeties_num-1; j++) {
+					assigned_comeeties[j] = assigned_comeeties[j+1];
+				}
+				assigned_comeeties[assigned_comeeties_num-1] = null;
+				assigned_comeeties_num-=1;
+				return true;
+			}
+		}
+		return false;
+	}
+	@Override
+	public String toString() {
+		String[] names = new String[assigned_comeeties_num];
+		for (int i = 0; i<assigned_comeeties_num; i++) {
+			names[i] = assigned_comeeties[i].getName();
+		}
+		String dept_name = "";
+		if (this.department == null) {
+			dept_name = "no department name";
+		}
+		else {
+			dept_name = this.department.getName();	
+		}
+		
+		if(assigned_comeeties_num == 0) {
+			return "Lecturer [name=" + name + ", id=" + id + ", lecturer_degree=" + lecturer_degree + ", degree_name="
+					+ degree_name + ", salary=" + salary + ", deparment=" + dept_name + "Lecturers has no committees yet"+ "]";
+		}
+		else {
+			return "Lecturer [name=" + name + ", id=" + id + ", lecturer_degree=" + lecturer_degree + ", degree_name="
+					+ degree_name + ", salary=" + salary + ", deparment=" + dept_name + ", assigned_comeeties=" +  Arrays.toString(names)+ "]";
+		}
+		
+	}
+	
 }
