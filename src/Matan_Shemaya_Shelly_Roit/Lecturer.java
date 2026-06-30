@@ -10,6 +10,7 @@ public class Lecturer {
 		Doctor,
 		Professor
 	};
+	
 	private String name;
 	private int id;
 	private degree lecturer_degree; 
@@ -18,6 +19,7 @@ public class Lecturer {
 	private Department department;
 	private Committee[] assigned_comeeties;
 	private int assigned_comeeties_num;
+	
 	//Constructor
 	public Lecturer(String name, int id, degree lecturer_degree, String degree_name, float salary) {
 		setName(name);
