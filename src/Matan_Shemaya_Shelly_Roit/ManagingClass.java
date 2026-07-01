@@ -1,7 +1,8 @@
 package Matan_Shemaya_Shelly_Roit;
 
-public class ManagingClass {
+public class ManagingClass{
 	// properties
+	@SuppressWarnings("unused")
 	private String college_name;
 	private Lecturer[] lecturers;
 	private Department[] departments;
@@ -14,17 +15,18 @@ public class ManagingClass {
 	// Constructor
 	public ManagingClass(String college_name) {
 		this.college_name = college_name;
+		
 		this.lecturers = new Lecturer[100];
 		this.departments = new Department[100];
 		this.committees = new Committee[100];
+		
 		num_of_lecturers = 0;
 		num_of_departments = 0;
 		num_of_committees = 0;
 	}
 
 	// methods
-
-	public boolean addLecturer(String name, int id, Lecturer.degree lecturer_degree, String degree_name, float salary) {
+	public void addLecturer(String name, int id, Lecturer.Degree lecturer_degree, String degree_name, float salary) throws Exception{
 		if (num_of_lecturers == lecturers.length) {
 			Lecturer[] lecturers2 = new Lecturer[2 * lecturers.length];
 			for (int i = 0; i < this.lecturers.length; i++) {
@@ -32,20 +34,24 @@ public class ManagingClass {
 			}
 			this.lecturers = lecturers2;
 		}
-		// הגדלת מערך במידה וצריך
+
 		for (int i = 0; i < num_of_lecturers; i++) {
 			if (this.lecturers[i].getName().equals(name)) {
-				return false;
+				throw new Exception();
 			}
 		}
-		/// בדיקה האם השם מופיע
-		lecturers[num_of_lecturers] = new Lecturer(name, id, lecturer_degree, degree_name, salary);
+		
+		if (lecturer_degree.equals(Lecturer.Degree.Doctor)) {
+			lecturers[num_of_lecturers] = new Doctor(name, id, degree_name, salary);
+		} else if (lecturer_degree.equals(Lecturer.Degree.Professor)) {
+			lecturers[num_of_lecturers] = new Professor(name, id, degree_name, salary);
+		} else {			
+			lecturers[num_of_lecturers] = new Lecturer(name, id, lecturer_degree, degree_name, salary);
+		}
 		num_of_lecturers += 1;
-		// הוספת מרצה
-		return true;
 	}
 
-	public boolean addCommittee(String name, String committee_chairman_name) {
+	public void addCommittee(String name, String committee_chairman_name) throws Exception{
 		if (num_of_committees == committees.length) {
 			Committee[] committees2 = new Committee[2 * committees.length];
 			for (int i = 0; i < this.committees.length; i++) {
@@ -53,22 +59,24 @@ public class ManagingClass {
 			}
 			this.committees = committees2;
 		}
+		
 		for (int i = 0; i < num_of_committees; i++) {
 			if (committees[i].getName().equals(name)) {
-				return false;
+				throw new Exception();
 			}
 		}
+		
 		for (int i = 0; i < num_of_lecturers; i++) {
 			if (lecturers[i].getName().equals(committee_chairman_name)) {
-				if (lecturers[i].getLecturer_degree() == Lecturer.degree.Doctor
-						|| lecturers[i].getLecturer_degree() == Lecturer.degree.Professor) {
+				if (lecturers[i] instanceof CommitteeHeadable) {
 					committees[num_of_committees] = new Committee(name, lecturers[i]);
 					num_of_committees += 1;
-					return true;
+					return;
 				}
 			}
 		}
-		return false;
+		
+		throw new Exception();
 	}
 
 	public boolean add_lecturer_to_committee(String committee_name, String lecturer_name) {
@@ -104,10 +112,7 @@ public class ManagingClass {
 	public boolean update_committee_chairman(String committee_name, String new_chairman_name) {
 		for (int i = 0; i<num_of_committees; i++) {
 			for (int j = 0; j<num_of_lecturers; j++) {
-			if (committees[i].getName().equals(committee_name) &&
-					lecturers[j].getName().equals(new_chairman_name) &&
-					(lecturers[j].getLecturer_degree()== Lecturer.degree.Doctor || 
-							lecturers[j].getLecturer_degree()== Lecturer.degree.Professor)){
+			if (committees[i].getName().equals(committee_name) && lecturers[j].getName().equals(new_chairman_name) && lecturers[j] instanceof CommitteeHeadable){
 				committees[i].setCommittee_chairman(lecturers[j]);
 				remove_lecturer_from_commmittee(lecturers[j].getName(),committee_name);
 				return true;

@@ -23,6 +23,14 @@ public class Committee {
 		setCommittee_chairman(committee_chairman);
 		this.num_of_lecturers_in_committee = lecturers_in_committee.length;
 	}
+	
+	
+	@Override
+	public String toString() {
+		return "Committee [name=" + name + ", lecturers_in_committee=" + Arrays.toString(lecturers_in_committee)
+				+ ", committee_chairman=" + committee_chairman + "]";
+	}
+	
 	// get+set
 	public String getName() {
 		return name;
@@ -36,8 +44,8 @@ public class Committee {
 		return committee_chairman;
 	}
 	public void setCommittee_chairman(Lecturer committee_chairman) {
-		if(committee_chairman.getLecturer_degree() == Lecturer.degree.Doctor ||
-				committee_chairman.getLecturer_degree()  == Lecturer.degree.Professor) {
+		if(committee_chairman.getLecturer_degree() == Lecturer.Degree.Doctor ||
+				committee_chairman.getLecturer_degree()  == Lecturer.Degree.Professor) {
 					this.committee_chairman = committee_chairman;
 		}
 	}
@@ -52,6 +60,8 @@ public class Committee {
 	public int getNum_of_lecturers_in_committee() {
 		return num_of_lecturers_in_committee;
 	}
+	
+	//methods
 	public boolean addLecturer(Lecturer other_lecturer) {
 		if (other_lecturer.getName().equals(committee_chairman.getName())) {
 			return false;
@@ -89,11 +99,4 @@ public class Committee {
 		}
 		return false;
 	}
-	
-	@Override
-	public String toString() {
-		return "Committee [name=" + name + ", lecturers_in_committee=" + Arrays.toString(lecturers_in_committee)
-				+ ", committee_chairman=" + committee_chairman + "]";
-	}
-	
 }

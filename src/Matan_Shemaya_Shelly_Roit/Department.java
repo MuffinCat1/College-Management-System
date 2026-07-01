@@ -24,6 +24,23 @@ public class Department {
 		num_of_lecturers_in_department = 0;
 	}
 	
+	
+	@Override
+	public String toString() {
+		String[] names = new String[num_of_lecturers_in_department];
+		for (int i = 0; i<num_of_lecturers_in_department; i++) {
+			names[i] = lecturers_in_department[i].getName();
+		}
+		if(num_of_lecturers_in_department==0) {
+			return "Department [name=" + name + ", num_of_students=" + num_of_students + "no lecturers in department yet" + "]";
+		}
+		else {
+		return "Department [name=" + name + ", num_of_students=" + num_of_students + ", lecturers_in_deparment="
+				+ Arrays.toString(names) + "]";
+		}
+	}
+	
+	
 	//get+set
 		public String getName() {
 			return name;
@@ -77,19 +94,5 @@ public class Department {
 			sum += lecturers_in_department[i].getSalary();
 		}
 		return sum/num_of_lecturers_in_department;
-	}
-	@Override
-	public String toString() {
-		String[] names = new String[num_of_lecturers_in_department];
-		for (int i = 0; i<num_of_lecturers_in_department; i++) {
-			names[i] = lecturers_in_department[i].getName();
-		}
-		if(num_of_lecturers_in_department==0) {
-			return "Department [name=" + name + ", num_of_students=" + num_of_students + "no lecturers in department yet" + "]";
-		}
-		else {
-		return "Department [name=" + name + ", num_of_students=" + num_of_students + ", lecturers_in_deparment="
-				+ Arrays.toString(names) + "]";
-		}
 	}
 }
