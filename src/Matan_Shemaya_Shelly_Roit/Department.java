@@ -28,21 +28,24 @@ public class Department {
 	@Override
 	public String toString() {
 		String[] names = new String[num_of_lecturers_in_department];
+		
 		for (int i = 0; i<num_of_lecturers_in_department; i++) {
 			names[i] = lecturers_in_department[i].getName();
 		}
+		
 		if(num_of_lecturers_in_department==0) {
 			return "Department [name=" + name + ", num_of_students=" + num_of_students + "no lecturers in department yet" + "]";
 		}
+		
 		else {
-		return "Department [name=" + name + ", num_of_students=" + num_of_students + ", lecturers_in_deparment="
+			return "Department [name=" + name + ", num_of_students=" + num_of_students + ", lecturers_in_deparment="
 				+ Arrays.toString(names) + "]";
 		}
 	}
 	
 	
 	//get+set
-		public String getName() {
+	public String getName() {
 			return name;
 		}
 	public void setName(String name) {
@@ -50,6 +53,7 @@ public class Department {
 			this.name = name;
 		}
 	}
+	
 	public int getNum_of_students() {
 		return num_of_students;
 	}
@@ -58,6 +62,7 @@ public class Department {
 			this.num_of_students = num_of_students;
 		}
 	}
+	
 	public Lecturer[] getLecturers_in_department() {
 		return lecturers_in_department;
 	}
@@ -68,19 +73,23 @@ public class Department {
 	}
 	
 	//methods
-	public boolean AddLecturer(Lecturer lecturer) {
-		if(!(lecturer.getDepartment() == null) ) {
-			return false;
+	public boolean AddLecturer(Lecturer lecturer) throws Exception{
+		
+		if(lecturer.getDepartment() != null) {
+			throw new Exceptions.LecturerHasDepartment();
 		}
+		
 		if (num_of_lecturers_in_department == lecturers_in_department.length) {
 			Lecturer[] lecturers_in_department2 = new Lecturer [2*lecturers_in_department.length];
-			for (int i = 0; i<this.lecturers_in_department.length;i++) {
+			for (int i = 0; i < this.lecturers_in_department.length;i++) {
 				lecturers_in_department2[i] = this.lecturers_in_department[i];
 			}
 			this.lecturers_in_department = lecturers_in_department2;
 		}
+		
 		lecturers_in_department[num_of_lecturers_in_department] = lecturer;
 		num_of_lecturers_in_department += 1;
+		
 		lecturer.setDepartment(this);
 		return true;
 	}

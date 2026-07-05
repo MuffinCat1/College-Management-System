@@ -1,10 +1,18 @@
 package Matan_Shemaya_Shelly_Roit;
 
-public class Professor extends Lecturer implements CommitteeHeadable{
+public class Professor extends Doctor{
 
-	public Professor(String name, int id, String degree_name, float salary) {
+	private String awarding_body_of_professorship;
+	
+	public Professor(String name, int id, String degree_name, float salary) throws Exception {
 		super(name, id, Degree.Professor, degree_name, salary);
-		// TODO Auto-generated constructor stub
 	}
-
+	
+	@Override
+	public String toString() {
+		if(awarding_body_of_professorship != null)
+			return "{"+super.toString() + ", awarding body of professorship= " + awarding_body_of_professorship+"}";
+		else
+			return "{"+super.toString() + ", awarding body of professorship= no awarding body of professorship assigned to the lecturer}";
+	}
 }

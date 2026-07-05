@@ -22,7 +22,7 @@ public class Lecturer {
 	protected int assigned_comeeties_num;
 	
 	//Constructor
-	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary) {
+	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary) throws Exception{
 		setName(name);
 		setId(id);
 		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
@@ -30,7 +30,7 @@ public class Lecturer {
 		setSalary (salary);
 		assigned_comeeties_num = 0;
 	}
-	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment) {
+	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment) throws Exception{
 		setName(name);
 		setId(id);
 		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
@@ -39,7 +39,7 @@ public class Lecturer {
 		setDepartment(deparment);
 		assigned_comeeties_num = 0;
 	}
-	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment,Committee[] assigned_comeeties ) {
+	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment,Committee[] assigned_comeeties) throws Exception{
 		setName(name);
 		setId(id);
 		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
@@ -67,17 +67,20 @@ public class Lecturer {
 		}
 		
 		if(assigned_comeeties_num == 0) {
-			return "Lecturer [name=" + name + ", id=" + id + ", lecturer_degree=" + lecturer_degree + ", degree_name="
-					+ degree_name + ", salary=" + salary + ", deparment=" + dept_name + "Lecturers has no committees yet"+ "]";
+			return "Lecturer: name= " + name + ", id= " + id + ", lecturer_degree= " + lecturer_degree + ", degree_name= "
+					+ degree_name + ", salary= " + salary + ", deparment= " + dept_name + ", Lecturers has no committees yet";
 		}
 		else {
-			return "Lecturer [name=" + name + ", id=" + id + ", lecturer_degree=" + lecturer_degree + ", degree_name="
-					+ degree_name + ", salary=" + salary + ", deparment=" + dept_name + ", assigned_comeeties=" +  Arrays.toString(names)+ "]";
+			return "Lecturer: name= " + name + ", id= " + id + ", lecturer_degree= " + lecturer_degree + ", degree_name= "
+					+ degree_name + ", salary= " + salary + ", deparment= " + dept_name + ", assigned_comeeties=" +  Arrays.toString(names);
 		}
 		
 	}
-	
-	
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+ 
 	//get+set
 	public String getName() {
 		return name;
@@ -90,9 +93,11 @@ public class Lecturer {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		if (id>=100000000) {
+	public void setId(int id) throws Exceptions.IdOutOfRange{
+		if (id>=100000000 && id <= 999999999) {
 			this.id = id;
+		} else {
+			throw new Exceptions.IdOutOfRange();
 		}
 	}
 	public Degree getLecturer_degree() {
@@ -132,7 +137,9 @@ public class Lecturer {
 		}
 	}
 	
-	public boolean addCommitteeToLecturer(Committee new_committee) {
+	
+	//methods
+	public void addCommitteeToLecturer(Committee new_committee) {
 		if (this.assigned_comeeties == null) {
 		    this.assigned_comeeties = new Committee[10];
 		 }
@@ -147,8 +154,6 @@ public class Lecturer {
 		
 		assigned_comeeties[assigned_comeeties_num] = new_committee;
 		assigned_comeeties_num++;
-		
-		return true;
 	}
 	
 	public boolean removeCommittee(Committee committee) {
