@@ -1,35 +1,33 @@
 package Matan_Shemaya_Shelly_Roit;
 
-import java.util.Arrays;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class ManagingClass{
+public class ManagingClass implements Serializable{
 	// properties
 	private String college_name;
-	private Lecturer[] lecturers;
-	private Department[] departments;
-	private Committee[] committees;
+	private ArrayList<Lecturer> lecturers;
+	private ArrayList<Department> departments;
+	private ArrayList<Committee> committees;
 
-	private int num_of_lecturers;
-	private int num_of_departments;
-	private int num_of_committees;
 
 	// Constructor
 	public ManagingClass(String college_name) {
 		this.college_name = college_name;
 		
-		this.lecturers = new Lecturer[100];
-		this.departments = new Department[100];
-		this.committees = new Committee[100];
+		this.lecturers = new ArrayList<Lecturer>();
+		this.departments = new ArrayList<Department>();
+		this.committees = new ArrayList<Committee>();
 		
-		num_of_lecturers = 0;
-		num_of_departments = 0;
-		num_of_committees = 0;
 	}
 
 	@Override
 	public String toString() {
-		return "College [name=" + college_name + ", committees=" + Arrays.toString(committees)
-		+ ", Departments=" + Arrays.toString(departments) + ",  Lecturers=" + Arrays.toString(lecturers) +"]";
+		return "College [name=" + college_name + ", committees=" + committees
+		+ ", Departments=" + departments + ",  Lecturers=" + lecturers +"]";
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -38,70 +36,47 @@ public class ManagingClass{
 	
 	// methods
 	public void addLecturer(String name, int id, Lecturer.Degree lecturer_degree, String degree_name, float salary) throws Exception{
-		if (num_of_lecturers == lecturers.length) {
-			Lecturer[] lecturers2 = new Lecturer[2 * lecturers.length];
-			for (int i = 0; i < this.lecturers.length; i++) {
-				lecturers2[i] = this.lecturers[i];
-			}
-			this.lecturers = lecturers2;
-		}
-
-		for (int i = 0; i < num_of_lecturers; i++) {
-			if (this.lecturers[i].getName().equals(name)) {
+		for (int i = 0; i < lecturers.size(); i++) {
+			if (this.lecturers.get(i).getName().equals(name)) {
 				throw new Exceptions.LecturerAlreadyExist();
 			}
 		}
 		
 		try {			
-			if (lecturer_degree.equals(Lecturer.Degree.Doctor)) {
-				lecturers[num_of_lecturers] = new Doctor(name, id, degree_name, salary);
-			} else if (lecturer_degree.equals(Lecturer.Degree.Professor)) {
-				lecturers[num_of_lecturers] = new Professor(name, id, degree_name, salary);
+			if (lecturer_degree.equals(Lecturer.Degree.DOCTOR)) {
+				lecturers.add(new Doctor(name, id, degree_name, salary));
+			} else if (lecturer_degree.equals(Lecturer.Degree.PROFESSOR)) {
+				lecturers.add(new Professor(name, id, degree_name, salary));
 			} else {			
-				lecturers[num_of_lecturers] = new Lecturer(name, id, lecturer_degree, degree_name, salary);
+				lecturers.add(new Lecturer(name, id, lecturer_degree, degree_name, salary));
 			}
-			num_of_lecturers += 1;
 		} catch(Exceptions.IdOutOfRange e) {
 			throw e;
 		}
 	}
 
-	public void addCommittee(String name, String committee_chairman_name) throws Exception{
-		if (num_of_committees == committees.length) {
-			Committee[] committees2 = new Committee[2 * committees.length];
-			for (int i = 0; i < this.committees.length; i++) {
-				committees2[i] = this.committees[i];
-			}
-			this.committees = committees2;
-		}
-		
-		for (int i = 0; i < num_of_committees; i++) {
-			if (committees[i].getName().equals(name)) {
-				throw new Exceptions.CommitteeAlreadyExist();
-			}
-		}
-		
-		for (int i = 0; i < num_of_lecturers; i++) {
-			if (lecturers[i].getName().equals(committee_chairman_name) && lecturers[i] instanceof CommitteeHeadable) {
-				committees[num_of_committees] = new Committee(name, lecturers[i]);
-				lecturers[i].addCommitteeToLecturer(committees[num_of_committees]);
-				num_of_committees += 1;
-				return;
-			}
-		}
-		
-		throw new Exceptions.CantMakeCommitteeChairMan();
+	public void addCommittee(String name, String committee_chairman_name, Lecturer.Degree committee_degree) throws Exception{		
+	    for (int i = 0; i < committees.size(); i++) {
+	        if (committees.get(i).getName().equals(name)) {
+	            throw new Exceptions.CommitteeAlreadyExist();
+	        }
+	    }
+	    
+	    for (int i = 0; i < lecturers.size(); i++) {
+	        if (lecturers.get(i).getName().equals(committee_chairman_name) 
+	            && lecturers.get(i) instanceof CommitteeHeadable) {
+
+	            Committee committee = new Committee(name, lecturers.get(i), committee_degree);
+	            committees.add(committee);
+	            lecturers.get(i).addCommitteeToLecturer(committee);
+	            return;
+	        }
+	    }
+	    
+	    throw new Exceptions.CantMakeCommitteeChairMan();
 	}
 	public void addCommittee(Committee committee){
-		if (num_of_committees == committees.length) {
-			Committee[] committees2 = new Committee[2 * committees.length];
-			for (int i = 0; i < this.committees.length; i++) {
-				committees2[i] = this.committees[i];
-			}
-			this.committees = committees2;
-		}
-		
-		committees[num_of_committees] = committee;
+		committees.add(committee);
 	}
 
 	public void add_lecturer_to_committee(String committee_name, String lecturer_name) throws Exception{
@@ -109,14 +84,14 @@ public class ManagingClass{
 		boolean foundLecturer = false;
 		
 		try {
-			for (int i = 0; i < num_of_committees; i++) {
-				if(committees[i].getName().equals(committee_name)) {					
+			for (int i = 0; i < committees.size(); i++) {
+				if(committees.get(i).getName().equals(committee_name)) {					
 					foundCommittee = true;
-					for (int j = 0; j < num_of_lecturers; j++) {
-						if (lecturers[j].getName().equals(lecturer_name)) {
+					for (int j = 0; j < lecturers.size(); j++) {
+						if (lecturers.get(j).getName().equals(lecturer_name)) {
 							foundLecturer = true;
-							committees[i].addLecturer(lecturers[j]);
-							lecturers[j].addCommitteeToLecturer(committees[i]);
+							committees.get(i).addLecturer(lecturers.get(j));
+							lecturers.get(j).addCommitteeToLecturer(committees.get(i));
 							return;
 						}
 					}
@@ -136,29 +111,22 @@ public class ManagingClass{
 	}
 
 	public void add_department(String name,int num_of_students) throws Exception{
-		for (int i = 0; i<num_of_departments; i++) {
-			if(departments[i].getName().equals(name)) {
+		for (int i = 0; i<departments.size(); i++) {
+			if(departments.get(i).getName().equals(name)) {
 				throw new Exceptions.DepartmentAlreadyExist();
 			}
 		}
-		if (num_of_departments == departments.length) {
-			Department[] departments2 = new Department [2*departments.length];
-			for (int i = 0; i<this.departments.length;i++) {
-				departments2[i] = this.departments[i];
-			}
-			this.departments = departments2;
-		}
-		departments[num_of_departments] = new Department (name,num_of_students);
-		num_of_departments+=1;
+
+		departments.add(new Department (name,num_of_students));
 	}
 
 	public void update_committee_chairman(String committee_name, String new_chairman_name) throws Exception{
 		try {
-			for (int i = 0; i<num_of_committees; i++) {
-				for (int j = 0; j<num_of_lecturers; j++) {
-					if (committees[i].getName().equals(committee_name) && lecturers[j].getName().equals(new_chairman_name) && lecturers[j] instanceof CommitteeHeadable){
-						committees[i].setCommittee_chairman(lecturers[j]);
-						remove_lecturer_from_commmittee(lecturers[j].getName(),committee_name);
+			for (int i = 0; i<committees.size(); i++) {
+				for (int j = 0; j<lecturers.size(); j++) {
+					if (committees.get(i).getName().equals(committee_name) && lecturers.get(j).getName().equals(new_chairman_name) && lecturers.get(j) instanceof CommitteeHeadable){
+						committees.get(i).setCommittee_chairman(lecturers.get(j));
+						remove_lecturer_from_commmittee(lecturers.get(j).getName(),committee_name);
 					}
 				}
 			}
@@ -170,9 +138,9 @@ public class ManagingClass{
 	
 	public void remove_lecturer_from_commmittee(String lecturer_name, String committee_name) throws Exception{
 		try {
-			for (int i = 0; i<num_of_committees; i++) {
-				if(committees[i].getName().equals(committee_name)){
-					committees[i].removeLecturer(lecturer_name);
+			for (int i = 0; i<committees.size(); i++) {
+				if(committees.get(i).getName().equals(committee_name)){
+					committees.get(i).removeLecturer(lecturer_name);
 				}
 			}			
 		} catch (Exception e) {
@@ -184,16 +152,16 @@ public class ManagingClass{
 		Lecturer found_lecturer = null;
 		Department found_department = null;
 		
-		for(int i = 0; i<num_of_lecturers; i++) {
-			if (lecturers[i].getName().equals(lecturer_name)) {
-				found_lecturer = lecturers[i];
+		for(int i = 0; i<lecturers.size(); i++) {
+			if (lecturers.get(i).getName().equals(lecturer_name)) {
+				found_lecturer = lecturers.get(i);
 				break;
 			}		
 		}
 		
-		for (int i = 0; i<num_of_departments; i++) {
-			if (departments[i].getName().equals(department_name)) {
-				found_department = departments[i];
+		for (int i = 0; i<departments.size(); i++) {
+			if (departments.get(i).getName().equals(department_name)) {
+				found_department = departments.get(i);
 				break;
 			}		
 		}
@@ -212,57 +180,70 @@ public class ManagingClass{
 	}
 	
 	public Doctor Get_Doctor(String name) throws Exception{
-		for (int i =0; i< num_of_lecturers; ++i) {
-			if (lecturers[i].getName().equals(name)) {
-				if (lecturers[i].getLecturer_degree().ordinal() < Lecturer.Degree.Doctor.ordinal()) {
+		for (int i =0; i< lecturers.size(); ++i) {
+			if (lecturers.get(i).getName().equals(name)) {
+				if (lecturers.get(i).getLecturer_degree().ordinal() < Lecturer.Degree.DOCTOR.ordinal()) {
 					throw new Exceptions.CantMakeDoctor();
 					 }
 				} else {
-					return (Doctor)lecturers[i];
+					return (Doctor)lecturers.get(i);
 				}
 			}
 			throw new Exceptions.LecturerDoesntExist();
 	}
 	
 	public Committee get_Commettee(String name) throws Exception{
-		for (int i =0; i< num_of_lecturers; ++i) {
-			if(committees[i].getName().equals(name)) {
-				return committees[i];
+		for (int i =0; i< lecturers.size(); ++i) {
+			if(committees.get(i).getName().equals(name)) {
+				return committees.get(i);
 			}
 		}
 		throw new Exceptions.CommitteeDoesntExist();
 	}
 	
 	public double get_lecturers_avg() {
-		if(num_of_lecturers == 0) {
+		if(lecturers.size() == 0) {
 			return 0;
 		}
 		double sum = 0;
-		for (int i = 0; i<num_of_lecturers; i++) {
-			sum += lecturers[i].getSalary();
+		for (int i = 0; i<lecturers.size(); i++) {
+			sum += lecturers.get(i).getSalary();
 		}
-		return sum/num_of_lecturers;
+		return sum/lecturers.size();
 	}
 	
 	public double get_departments_lecturers_avg(String department_name) {
-		for (int i = 0; i<num_of_departments; i++) {
-			if(departments[i].getName().equals(department_name)) {
-				return departments[i].get_lecturers_avg();
+		for (int i = 0; i<departments.size(); i++) {
+			if(departments.get(i).getName().equals(department_name)) {
+				return departments.get(i).get_lecturers_avg();
 			}
 		}
 		return -1;
 	}
 	
 	public void printAllLecturers() {
-		for (int i = 0; i<num_of_lecturers; i++) {
-			System.out.println(lecturers[i]);
+		for (int i = 0; i<lecturers.size(); i++) {
+			System.out.println(lecturers.get(i));
 		}
 	}
 	
 	public void print_all_committees() {
-		for (int i = 0; i<num_of_committees; i++) {
-			System.out.println(committees[i]);
+		for (int i = 0; i<committees.size(); i++) {
+			System.out.println(committees.get(i));
 			System.out.println("================================================");
 		}
 	}
+
+	public void saveSystem() throws IOException{
+	    try {
+	        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("college.dat"));
+
+	        out.writeObject(this);
+
+	        out.close();
+
+	    } catch (IOException e) {
+	        throw e;
+	    }
 	}
+}

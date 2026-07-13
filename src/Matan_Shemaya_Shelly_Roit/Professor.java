@@ -1,11 +1,13 @@
 package Matan_Shemaya_Shelly_Roit;
 
-public class Professor extends Doctor{
+import java.io.Serializable;
+
+public class Professor extends Doctor implements CommitteeHeadable, Serializable{
 
 	private String awarding_body_of_professorship;
 	
 	public Professor(String name, int id, String degree_name, float salary) throws Exception {
-		super(name, id, Degree.Professor, degree_name, salary);
+		super(name, id, Degree.PROFESSOR, degree_name, salary);
 	}
 	
 	@Override

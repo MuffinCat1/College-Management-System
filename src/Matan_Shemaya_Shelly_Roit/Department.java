@@ -1,17 +1,17 @@
 package Matan_Shemaya_Shelly_Roit;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Department {
+public class Department implements Serializable{
 	//properties
 	private String name;
 	private int num_of_students;
-	private Lecturer[] lecturers_in_department;
-	private int num_of_lecturers_in_department;
+	private ArrayList<Lecturer> lecturers_in_department;
 	
 	
 	//Constructor
-	public Department(String name, int num_of_students, Lecturer[] lecturers_in_deparment) {
+	public Department(String name, int num_of_students, ArrayList<Lecturer> lecturers_in_deparment) {
 		setName(name);
 		setNum_of_students(num_of_students);
 		setLecturers_in_department(lecturers_in_deparment);
@@ -20,26 +20,25 @@ public class Department {
 	public Department(String name, int num_of_students) {
 		this.name = name;
 		this.num_of_students = num_of_students;
-		lecturers_in_department = new Lecturer [10];
-		num_of_lecturers_in_department = 0;
+		lecturers_in_department = new ArrayList<Lecturer>();
 	}
 	
 	
 	@Override
 	public String toString() {
-		String[] names = new String[num_of_lecturers_in_department];
+		ArrayList<String> names = new ArrayList<String>();;
 		
-		for (int i = 0; i<num_of_lecturers_in_department; i++) {
-			names[i] = lecturers_in_department[i].getName();
+		for (int i = 0; i<lecturers_in_department.size(); i++) {
+			names.add(lecturers_in_department.get(i).getName());
 		}
 		
-		if(num_of_lecturers_in_department==0) {
+		if(lecturers_in_department.size()==0) {
 			return "Department [name=" + name + ", num_of_students=" + num_of_students + "no lecturers in department yet" + "]";
 		}
 		
 		else {
 			return "Department [name=" + name + ", num_of_students=" + num_of_students + ", lecturers_in_deparment="
-				+ Arrays.toString(names) + "]";
+				+ names + "]";
 		}
 	}
 	
@@ -63,11 +62,11 @@ public class Department {
 		}
 	}
 	
-	public Lecturer[] getLecturers_in_department() {
+	public ArrayList<Lecturer> getLecturers_in_department() {
 		return lecturers_in_department;
 	}
-	public void setLecturers_in_department(Lecturer[] lecturers_in_department) {
-		if (!(lecturers_in_department.length == 0)) {
+	public void setLecturers_in_department(ArrayList<Lecturer> lecturers_in_department) {
+		if (!(lecturers_in_department.size() == 0)) {
 			this.lecturers_in_department = lecturers_in_department;
 		}
 	}
@@ -79,29 +78,21 @@ public class Department {
 			throw new Exceptions.LecturerHasDepartment();
 		}
 		
-		if (num_of_lecturers_in_department == lecturers_in_department.length) {
-			Lecturer[] lecturers_in_department2 = new Lecturer [2*lecturers_in_department.length];
-			for (int i = 0; i < this.lecturers_in_department.length;i++) {
-				lecturers_in_department2[i] = this.lecturers_in_department[i];
-			}
-			this.lecturers_in_department = lecturers_in_department2;
-		}
 		
-		lecturers_in_department[num_of_lecturers_in_department] = lecturer;
-		num_of_lecturers_in_department += 1;
+		lecturers_in_department.add(lecturer);
 		
 		lecturer.setDepartment(this);
 		return true;
 	}
 	
 	public double get_lecturers_avg() {
-		if(num_of_lecturers_in_department == 0) {
+		if(lecturers_in_department.size() == 0) {
 			return 0;
 		}
 		double sum = 0;
-		for (int i = 0; i<num_of_lecturers_in_department; i++) {
-			sum += lecturers_in_department[i].getSalary();
+		for (int i = 0; i<lecturers_in_department.size(); i++) {
+			sum += lecturers_in_department.get(i).getSalary();
 		}
-		return sum/num_of_lecturers_in_department;
+		return sum/lecturers_in_department.size();
 	}
 }

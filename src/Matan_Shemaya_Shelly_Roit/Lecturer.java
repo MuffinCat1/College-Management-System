@@ -1,15 +1,16 @@
 package Matan_Shemaya_Shelly_Roit;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Lecturer {
+public class Lecturer implements Serializable{
 	
 	//properties
 	public enum Degree {
-		First,
-		Second,
-		Doctor,
-		Professor
+		FIRST,
+		SECOND,
+		DOCTOR,
+		PROFESSOR
 	};
 	
 	protected String name;
@@ -18,8 +19,7 @@ public class Lecturer {
 	protected String degree_name;
 	protected float salary;
 	protected Department department;
-	protected Committee[] assigned_comeeties;
-	protected int assigned_comeeties_num;
+	protected ArrayList<Committee> assigned_committees;
 	
 	//Constructor
 	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary) throws Exception{
@@ -28,7 +28,7 @@ public class Lecturer {
 		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
 		setDegree_name(degree_name);
 		setSalary (salary);
-		assigned_comeeties_num = 0;
+		this.assigned_committees = new ArrayList<Committee>();
 	}
 	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment) throws Exception{
 		setName(name);
@@ -37,26 +37,24 @@ public class Lecturer {
 		setDegree_name(degree_name);
 		setSalary (salary);
 		setDepartment(deparment);
-		assigned_comeeties_num = 0;
+		this.assigned_committees = new ArrayList<Committee>();
 	}
-	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment,Committee[] assigned_comeeties) throws Exception{
+	public Lecturer(String name, int id, Degree lecturer_degree, String degree_name, float salary, Department deparment,ArrayList<Committee> assigned_committees) throws Exception{
 		setName(name);
 		setId(id);
 		this.lecturer_degree = lecturer_degree; // enum deals with invalid input
 		setDegree_name(degree_name);
 		setSalary (salary);
 		setDepartment(deparment);
-		setAssigned_comeeties(assigned_comeeties);
-		assigned_comeeties_num = 0;
-		
+		setassigned_committees(assigned_committees);
 	}
 	
 	
 	@Override
 	public String toString() {
-		String[] names = new String[assigned_comeeties_num];
-		for (int i = 0; i<assigned_comeeties_num; i++) {
-			names[i] = assigned_comeeties[i].getName();
+		ArrayList<String> names = new ArrayList<String>();
+		for (int i = 0; i<assigned_committees.size(); i++) {
+			names.add(assigned_committees.get(i).getName());
 		}
 		String dept_name = "";
 		if (this.department == null) {
@@ -66,13 +64,13 @@ public class Lecturer {
 			dept_name = this.department.getName();	
 		}
 		
-		if(assigned_comeeties_num == 0) {
+		if(assigned_committees.size() == 0) {
 			return "Lecturer: name= " + name + ", id= " + id + ", lecturer_degree= " + lecturer_degree + ", degree_name= "
 					+ degree_name + ", salary= " + salary + ", deparment= " + dept_name + ", Lecturers has no committees yet";
 		}
 		else {
 			return "Lecturer: name= " + name + ", id= " + id + ", lecturer_degree= " + lecturer_degree + ", degree_name= "
-					+ degree_name + ", salary= " + salary + ", deparment= " + dept_name + ", assigned_comeeties=" +  Arrays.toString(names);
+					+ degree_name + ", salary= " + salary + ", deparment= " + dept_name + ", assigned_committees=" + names;
 		}
 		
 	}
@@ -128,45 +126,27 @@ public class Lecturer {
 			this.salary = salary;
 		}
 	}
-	public Committee[] getAssigned_comeeties() {
-		return assigned_comeeties;
+	public ArrayList<Committee> getassigned_committees() {
+		return assigned_committees;
 	}
-	public void setAssigned_comeeties(Committee[] assigned_comeeties) {
-		if (assigned_comeeties.length != 0) {
-			this.assigned_comeeties = assigned_comeeties;
+	public void setassigned_committees(ArrayList<Committee> assigned_committees) {
+		if (assigned_committees.size() != 0) {
+			this.assigned_committees = assigned_committees;
 		}
 	}
 	
 	
 	//methods
 	public void addCommitteeToLecturer(Committee new_committee) {
-		if (this.assigned_comeeties == null) {
-		    this.assigned_comeeties = new Committee[10];
+		if (this.assigned_committees == null) {
+		    this.assigned_committees = new ArrayList<Committee>();;
 		 }
-		
-		if (assigned_comeeties_num == assigned_comeeties.length) {
-			Committee[] assigned_comeeties2 = new Committee [2*assigned_comeeties.length];
-			for (int i = 0; i<this.assigned_comeeties.length;i++) {
-				assigned_comeeties2[i] = this.assigned_comeeties[i];
-			}
-			this.assigned_comeeties = assigned_comeeties2;
-		}
-		
-		assigned_comeeties[assigned_comeeties_num] = new_committee;
-		assigned_comeeties_num++;
+
+		assigned_committees.add(new_committee);
 	}
 	
-	public boolean removeCommittee(Committee committee) {
-		for (int i = 0; i<assigned_comeeties_num;i++ ) {
-			if(assigned_comeeties[i].getName().equals(committee.getName())) {
-				for(int j = i; j<assigned_comeeties_num-1; j++) {
-					assigned_comeeties[j] = assigned_comeeties[j+1];
-				}
-				assigned_comeeties[assigned_comeeties_num-1] = null;
-				assigned_comeeties_num-=1;
-				return true;
-			}
-		}
-		return false;
+	public void removeCommittee(Committee committee) throws Exceptions.CommitteeDoesntExist{
+		if(!assigned_committees.remove(committee))
+			throw new Exceptions.CommitteeDoesntExist();
 	}
 }

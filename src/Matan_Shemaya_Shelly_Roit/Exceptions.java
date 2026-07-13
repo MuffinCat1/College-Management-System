@@ -1,8 +1,10 @@
 package Matan_Shemaya_Shelly_Roit;
 
+import java.io.Serializable;
+
 @SuppressWarnings("serial")
 public class Exceptions {
-	public static class LecturerHasDepartment extends Exception{
+	public static class LecturerHasDepartment extends Exception implements Serializable{
 		public LecturerHasDepartment() {
 			super("There is a department assigned to the lecturer already");
 		}
@@ -54,6 +56,11 @@ public class Exceptions {
 	public static class CantMakeDoctor extends Exception {
 		public CantMakeDoctor() {
 			super("Cant make a doctor with degree less then Doctor");							 
+		}
+	}
+	public static class WrongDegree extends Exception {
+		public WrongDegree() {
+			super("Cant add lecturer because of wrong degree");							 
 		}
 	}
 }

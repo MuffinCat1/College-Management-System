@@ -1,13 +1,14 @@
 package Matan_Shemaya_Shelly_Roit;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Doctor extends Lecturer implements CommitteeHeadable{
+public class Doctor extends Lecturer implements CommitteeHeadable, Serializable{
 
-	protected String articles[];
+	protected ArrayList<String> articles;
 	
 	public Doctor(String name, int id, String degree_name, float salary) throws Exception {
-		super(name, id, Degree.Doctor, degree_name, salary);
+		super(name, id, Degree.DOCTOR, degree_name, salary);
 	}
 	
 	protected Doctor(String name, int id, Degree degree, String degree_name, float salary) throws Exception {
@@ -19,17 +20,17 @@ public class Doctor extends Lecturer implements CommitteeHeadable{
 		if (articles == null)
 			return "(" + super.toString() + ", articles= the lecturer has no articles)";
 		else
-			return "("+super.toString() + ", articles= " + Arrays.toString(articles)+")";
+			return "("+super.toString() + ", articles= " + articles+")";
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		Doctor doctor_obj = (Doctor)obj;
 		
-		return doctor_obj.articles.length == this.articles.length;
+		return doctor_obj.articles.size()== this.articles.size();
 	}
 	
-	public String[] get_Articles() {
+	public ArrayList<String> get_Articles() {
 		return articles;
 	}
 	

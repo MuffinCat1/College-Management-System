@@ -1,16 +1,32 @@
 //Matan_Shemaya_331582130_Shelly_Roit_327777710
 package Matan_Shemaya_Shelly_Roit;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.*;
+
+import Matan_Shemaya_Shelly_Roit.Lecturer.Degree;
 
 public class Main {
 	public static Scanner s  = new Scanner(System.in);
 	
 	public static void main(String[] args) {
-		System.out.println("Enter college name");
+		ManagingClass college;
 		
-		String college_name = s.nextLine();
-		ManagingClass college = new ManagingClass(college_name);
+		
+	    try {
+	        ObjectInputStream in = new ObjectInputStream(new FileInputStream("college.dat"));
+
+	        college = (ManagingClass) in.readObject();
+
+	        in.close();
+			System.out.println("Loaded saved information");
+	    } catch (Exception e) {
+			System.out.println("Enter college name");
+			String college_name = s.nextLine();
+	    	college = new ManagingClass(college_name);
+	    }
 		
 		boolean f_continue = true;
 		
@@ -45,6 +61,13 @@ public class Main {
 			switch (choice) {
 			
 			case 0:
+				try {
+					college.saveSystem();
+					System.out.println("Saved your information");
+				} catch (IOException e) {
+					System.err.println("Couldnt save your information");
+				}
+				
 				System.out.println("Goodbye!");
 				f_continue = false;
 				break;
@@ -64,7 +87,7 @@ public class Main {
 					Lecturer.Degree lecturer_degree;
 					
 					try {						
-						lecturer_degree = Lecturer.Degree.valueOf(degree);
+						lecturer_degree = Lecturer.Degree.valueOf(degree.toUpperCase());
 					} catch(IllegalArgumentException e) {
 						System.err.println("wrong input, please try again ");
 						is_added = false;
@@ -124,9 +147,12 @@ public class Main {
 					
 					System.out.println("Enter committee chairman");
 					String committee_chairman_name = s.nextLine();
-				
+
+					System.out.println("Enter committee degree");
+					Lecturer.Degree committee_degree = Degree.valueOf(s.nextLine().toUpperCase());
+					
 					try { 
-						college.addCommittee(committee_name,committee_chairman_name);
+						college.addCommittee(committee_name,committee_chairman_name, committee_degree);
 						System.out.println("Committee added successfully");
 						is_added2 = true;
 					}
@@ -475,7 +501,7 @@ public class Main {
 					if (first_lecturer.equals(second_lecturer)) {
 						System.out.println("both Doctors/Professors have the same amount of articles");
 						done = true;
-					} else if(first_lecturer.get_Articles().length > second_lecturer.get_Articles().length) {
+					} else if(first_lecturer.get_Articles().size() > second_lecturer.get_Articles().size()) {
 						System.out.printf("lecturer %s has more articles then %s\n", first_name, second_name);
 						done = true;
 					} else {
@@ -555,10 +581,10 @@ public class Main {
 					if(first_committee.equals(second_committee)) {
 						System.out.println("Both committees have the same number of lecturers assigned and articles");
 						done1 = true;
-					} else if (first_committee.getNum_of_lecturers_in_committee() > second_committee.getNum_of_lecturers_in_committee()){
+					} else if (first_committee.getLecturers_in_committee().size() > second_committee.getLecturers_in_committee().size()){
 						System.out.println("first committee has more lecturers then second");
 						done1 = true;
-					} else if(first_committee.getNum_of_lecturers_in_committee() < second_committee.getNum_of_lecturers_in_committee()) {
+					} else if(first_committee.getLecturers_in_committee().size() < second_committee.getLecturers_in_committee().size()) {
 						System.out.println("second committee has more lecturers then first");
 						done1 = true;
 					} else if (first_committee.Get_total_articles_in_commitee() > second_committee.Get_total_articles_in_commitee()) {
@@ -610,8 +636,8 @@ public class Main {
 					clone.setName(committee.getName()+"-new");
 					college.addCommittee(clone);
 					
-					for (int i = 0; i < clone.getNum_of_lecturers_in_committee(); ++i) {
-						clone.getLecturers_in_committee()[i].addCommitteeToLecturer(clone);
+					for (int i = 0; i < clone.getLecturers_in_committee().size(); ++i) {
+						clone.getLecturers_in_committee().get(i).addCommitteeToLecturer(clone);
 					}
 					
 					System.out.println("Cloning was succesfull");
