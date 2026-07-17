@@ -1,0 +1,14 @@
+# Eclipse
+.settings/
+.project
+.classpath
+
+# Compiled classes
+bin/
+*.class
+
+# macOS
+.DS_Store
+
+# Generated data
+*.dat
