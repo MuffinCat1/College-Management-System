@@ -69,7 +69,7 @@ src/
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/MuffinCat1/<repository-name>.git
+git clone https://github.com/MuffinCat1/College-Management-System.git
 ```
 
 ### Run the Project
